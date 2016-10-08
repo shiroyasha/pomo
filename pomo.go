@@ -3,9 +3,16 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"gopkg.in/urfave/cli.v1"
 )
+
+func allArgs(c *cli.Context) string {
+	var args = strings.Join(c.Args(), " ")
+
+	return strings.Trim(args, " ")
+}
 
 func status(c *cli.Context) error {
 	fmt.Println("status")
@@ -13,17 +20,26 @@ func status(c *cli.Context) error {
 }
 
 func add(c *cli.Context) error {
-	fmt.Println("add")
+	var task = allArgs(c)
+
+	if task == "" {
+		return cli.NewExitError("Task can't be empty.", 10)
+	}
+
+	fmt.Println(task)
+
 	return nil
 }
 
 func list(c *cli.Context) error {
 	fmt.Println("list")
+
 	return nil
 }
 
 func remove(c *cli.Context) error {
 	fmt.Println("remove")
+
 	return nil
 }
 
