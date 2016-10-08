@@ -11,6 +11,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "pomo"
 	app.Usage = "Pomodoro timer for the Command Line"
+	app.Version = "0.1.0"
 	app.Action = tasks.Status
 
 	app.Commands = []cli.Command{
