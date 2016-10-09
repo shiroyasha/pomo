@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gopkg.in/urfave/cli.v1"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -20,18 +21,7 @@ func Add(c *cli.Context) error {
 		return cli.NewExitError("Task can't be empty.", 10)
 	}
 
-	file, err := os.OpenFile("/tmp/nesto", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-
-	_, err = file.WriteString(task)
-	_, err = file.WriteString("\n")
-
-	if err != nil {
-		fmt.Println("ERROR:", err)
-
-		return cli.NewExitError("Failed to save the task", 11)
-	}
-
-	file.Close()
+	appendTask(task)
 
 	return nil
 }
@@ -45,7 +35,42 @@ func List(c *cli.Context) error {
 }
 
 func Remove(c *cli.Context) error {
+	index, _ := strconv.Atoi(c.Args().First())
+
+	removeTask(index)
+
 	return nil
+}
+
+func removeTask(index int) error {
+	tasks := loadTasks()
+
+	tasks = append(tasks[:index], tasks[index+1:]...)
+
+	saveTasks(tasks)
+
+	return nil
+}
+
+func appendTask(task string) {
+	tasks := loadTasks()
+
+	tasks = append(tasks, task)
+
+	saveTasks(tasks)
+}
+
+func saveTasks(tasks []string) {
+	fd, _ := os.Create("/tmp/nesto")
+	defer fd.Close()
+
+	writer := bufio.NewWriter(fd)
+
+	for _, task := range tasks {
+		fmt.Fprintf(writer, "%s\n", task)
+	}
+
+	writer.Flush()
 }
 
 func loadTasks() []string {
