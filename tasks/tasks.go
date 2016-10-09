@@ -25,11 +25,11 @@ func Add(description string) error {
 }
 
 func Remove(index int) error {
-	// tasks := Load()
+	tasks := Load()
 
-	// tasks = append(tasks[:index], tasks[index+1:]...)
+	tasks = append(tasks[:index], tasks[index+1:]...)
 
-	// Save(tasks)
+	Save(tasks)
 
 	return nil
 }
