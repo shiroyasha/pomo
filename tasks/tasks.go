@@ -2,20 +2,38 @@ package tasks
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 )
 
 const filePath = "/tmp/tasks"
 
-func Add(task string) error {
-	tasks := Load()
+type Task struct {
+	Description string
+	State       string
+}
+
+func Add(description string) error {
+	// tasks := Load()
+
+	tasks := []Task{}
+
+	task := Task{Description: description, State: "pendind"}
 
 	tasks = append(tasks, task)
 
-	Save(tasks)
+	json_tasks, _ := json.Marshal(tasks)
+
+	fmt.Println(string(json_tasks))
 
 	return nil
+
+	// tasks = append(tasks, task)
+
+	// Save(tasks)
+
+	// return nil
 }
 
 func Remove(index int) error {
