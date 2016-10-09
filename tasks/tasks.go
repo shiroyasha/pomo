@@ -1,10 +1,8 @@
 package tasks
 
 import (
-	"bufio"
 	"encoding/json"
-	"fmt"
-	"os"
+	"io/ioutil"
 )
 
 const filePath = "/tmp/tasks"
@@ -15,67 +13,43 @@ type Task struct {
 }
 
 func Add(description string) error {
-	// tasks := Load()
-
-	tasks := []Task{}
+	tasks := Load()
 
 	task := Task{Description: description, State: "pendind"}
 
 	tasks = append(tasks, task)
-
-	json_tasks, _ := json.Marshal(tasks)
-
-	fmt.Println(string(json_tasks))
-
-	return nil
-
-	// tasks = append(tasks, task)
-
-	// Save(tasks)
-
-	// return nil
-}
-
-func Remove(index int) error {
-	tasks := Load()
-
-	tasks = append(tasks[:index], tasks[index+1:]...)
 
 	Save(tasks)
 
 	return nil
 }
 
-func Load() []string {
-	file, err := os.Open(filePath)
+func Remove(index int) error {
+	// tasks := Load()
 
-	defer file.Close()
+	// tasks = append(tasks[:index], tasks[index+1:]...)
+
+	// Save(tasks)
+
+	return nil
+}
+
+func Load() []Task {
+	data, err := ioutil.ReadFile(filePath)
 
 	if err != nil {
 		panic("Could not load tasks")
 	}
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
+	result := []Task{}
 
-	result := []string{}
-
-	for scanner.Scan() {
-		result = append(result, scanner.Text())
-	}
+	json.Unmarshal(data, &result)
 
 	return result
 }
 
-func Save(tasks []string) {
-	fd, _ := os.Create(filePath)
-	defer fd.Close()
+func Save(tasks []Task) {
+	data, _ := json.Marshal(tasks)
 
-	writer := bufio.NewWriter(fd)
-
-	for _, task := range tasks {
-		fmt.Fprintf(writer, "%s\n", task)
-	}
-
-	writer.Flush()
+	ioutil.WriteFile(filePath, data, 0644)
 }
