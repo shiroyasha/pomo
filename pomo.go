@@ -29,7 +29,7 @@ func add(c *cli.Context) error {
 
 func list(c *cli.Context) error {
 	for index, task := range tasks.Load() {
-		fmt.Printf("%d) %s\n", index, task)
+		fmt.Printf("%d) %s\n", index, task.Description)
 	}
 
 	return nil
