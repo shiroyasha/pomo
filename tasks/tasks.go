@@ -37,31 +37,36 @@ func Add(c *cli.Context) error {
 }
 
 func List(c *cli.Context) error {
-	file, err := os.Open("/tmp/nesto")
-
-	defer file.Close()
-
-	if err != nil {
-		return cli.NewExitError("Could not load tasks.", 12)
-	}
-
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-
-	index := 1
-	for scanner.Scan() {
-		fmt.Printf("%d) %s\n", index, scanner.Text())
-
-		index += 1
+	for index, task := range loadTasks() {
+		fmt.Printf("%d) %s\n", index, task)
 	}
 
 	return nil
 }
 
 func Remove(c *cli.Context) error {
-	fmt.Println("remove")
-
 	return nil
+}
+
+func loadTasks() []string {
+	file, err := os.Open("/tmp/nesto")
+
+	defer file.Close()
+
+	if err != nil {
+		panic("Could not load tasks")
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+
+	result := []string{}
+
+	for scanner.Scan() {
+		result = append(result, scanner.Text())
+	}
+
+	return result
 }
 
 func allArgs(c *cli.Context) string {
