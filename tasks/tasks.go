@@ -2,7 +2,6 @@ package tasks
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -31,7 +30,7 @@ func Start(index int) error {
 func Add(description string) error {
 	tasks := Load()
 
-	task := Task{Description: description, State: STATE_STARTED}
+	task := Task{Description: description, State: STATE_PENDING}
 
 	tasks = append(tasks, task)
 

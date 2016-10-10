@@ -44,7 +44,17 @@ func remove(c *cli.Context) error {
 }
 
 func start(c *cli.Context) error {
-	index, _ := strconv.Atoi(c.Args().First())
+	if len(c.Args()) > 1 {
+		return cli.NewExitError("Too many arguments", 10)
+	}
+
+	index := 0
+
+	if len(c.Args()) == 1 {
+		index, _ = strconv.Atoi(c.Args().First())
+	} else {
+		index = 0
+	}
 
 	tasks.Start(index)
 
