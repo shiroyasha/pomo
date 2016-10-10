@@ -32,7 +32,7 @@ func Add(description string) error {
 
 	task := Task{Description: description, State: STATE_PENDING}
 
-	tasks = append(tasks, task)
+	tasks = append([]Task{task}, tasks...)
 
 	Save(tasks)
 
