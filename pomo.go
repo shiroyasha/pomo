@@ -48,15 +48,13 @@ func start(c *cli.Context) error {
 		return cli.NewExitError("Too many arguments", 10)
 	}
 
-	index := 0
-
 	if len(c.Args()) == 1 {
-		index, _ = strconv.Atoi(c.Args().First())
-	} else {
-		index = 0
-	}
+		index, _ := strconv.Atoi(c.Args().First())
 
-	tasks.Start(index)
+		tasks.Start(index)
+	} else {
+		tasks.StartFirstPending()
+	}
 
 	return nil
 }

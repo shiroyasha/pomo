@@ -27,6 +27,20 @@ func Start(index int) error {
 	return nil
 }
 
+func StartFirstPending() error {
+	tasks := Load()
+
+	for i, task := range tasks {
+		if task.State == STATE_PENDING {
+			Start(i)
+
+			return nil
+		}
+	}
+
+	return nil
+}
+
 func Add(description string) error {
 	tasks := Load()
 
