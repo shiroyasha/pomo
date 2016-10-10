@@ -1,15 +1,21 @@
 package tasks
 
 import (
-	"bufio"
-	"fmt"
-	"os"
+	"encoding/json"
+	"io/ioutil"
 )
 
 const filePath = "/tmp/tasks"
 
-func Add(task string) error {
+type Task struct {
+	Description string
+	State       string
+}
+
+func Add(description string) error {
 	tasks := Load()
+
+	task := Task{Description: description, State: "pendind"}
 
 	tasks = append(tasks, task)
 
@@ -28,36 +34,22 @@ func Remove(index int) error {
 	return nil
 }
 
-func Load() []string {
-	file, err := os.Open(filePath)
-
-	defer file.Close()
+func Load() []Task {
+	data, err := ioutil.ReadFile(filePath)
 
 	if err != nil {
 		panic("Could not load tasks")
 	}
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
+	result := []Task{}
 
-	result := []string{}
-
-	for scanner.Scan() {
-		result = append(result, scanner.Text())
-	}
+	json.Unmarshal(data, &result)
 
 	return result
 }
 
-func Save(tasks []string) {
-	fd, _ := os.Create(filePath)
-	defer fd.Close()
+func Save(tasks []Task) {
+	data, _ := json.Marshal(tasks)
 
-	writer := bufio.NewWriter(fd)
-
-	for _, task := range tasks {
-		fmt.Fprintf(writer, "%s\n", task)
-	}
-
-	writer.Flush()
+	ioutil.WriteFile(filePath, data, 0644)
 }
