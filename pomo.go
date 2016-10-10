@@ -29,7 +29,7 @@ func add(c *cli.Context) error {
 
 func list(c *cli.Context) error {
 	for index, task := range tasks.Load() {
-		fmt.Printf("%d) %s\n", index, task.Description)
+		fmt.Printf("%d) [%s] %s\n", index, task.State, task.Description)
 	}
 
 	return nil
@@ -39,6 +39,14 @@ func remove(c *cli.Context) error {
 	index, _ := strconv.Atoi(c.Args().First())
 
 	tasks.Remove(index)
+
+	return nil
+}
+
+func start(c *cli.Context) error {
+	index, _ := strconv.Atoi(c.Args().First())
+
+	tasks.Start(index)
 
 	return nil
 }
@@ -68,6 +76,12 @@ func main() {
 			Aliases: []string{"rm"},
 			Usage:   "Remove a task from the list",
 			Action:  remove,
+		},
+		{
+			Name:    "start",
+			Aliases: []string{},
+			Usage:   "Start a task",
+			Action:  start,
 		},
 		{
 			Name:    "list",

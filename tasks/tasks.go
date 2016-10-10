@@ -2,21 +2,36 @@ package tasks
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 )
 
 const filePath = "/tmp/tasks"
 
+const STATE_PENDING = "pending"
+const STATE_STARTED = "started"
+
 type Task struct {
 	Description string
 	State       string
 }
 
+func Start(index int) error {
+	tasks := Load()
+
+	task := &tasks[index]
+	task.State = STATE_STARTED
+
+	Save(tasks)
+
+	return nil
+}
+
 func Add(description string) error {
 	tasks := Load()
 
-	task := Task{Description: description, State: "pendind"}
+	task := Task{Description: description, State: STATE_STARTED}
 
 	tasks = append(tasks, task)
 
