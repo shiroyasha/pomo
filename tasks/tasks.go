@@ -3,6 +3,7 @@ package tasks
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 )
 
 const filePath = "/tmp/tasks"
@@ -34,7 +35,23 @@ func Remove(index int) error {
 	return nil
 }
 
+func Init() {
+	_, err := os.Stat(filePath)
+
+	if err == nil {
+		return
+	}
+
+	if os.IsNotExist(err) {
+		tasks := []Task{}
+
+		Save(tasks)
+	}
+}
+
 func Load() []Task {
+	Init()
+
 	data, err := ioutil.ReadFile(filePath)
 
 	if err != nil {
