@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"path"
+	"strings"
+	"time"
 )
-
-const filePath = "/tmp/tasks"
 
 const STATE_PENDING = "pending"
 const STATE_STARTED = "started"
@@ -64,7 +65,7 @@ func Remove(index int) error {
 }
 
 func Init() {
-	_, err := os.Stat(filePath)
+	_, err := os.Stat(filePath())
 
 	if err == nil {
 		return
@@ -80,7 +81,7 @@ func Init() {
 func Load() []Task {
 	Init()
 
-	data, err := ioutil.ReadFile(filePath)
+	data, err := ioutil.ReadFile(filePath())
 
 	if err != nil {
 		panic("Could not load tasks")
@@ -96,5 +97,13 @@ func Load() []Task {
 func Save(tasks []Task) {
 	data, _ := json.Marshal(tasks)
 
-	ioutil.WriteFile(filePath, data, 0644)
+	ioutil.WriteFile(filePath(), data, 0644)
+}
+
+func filePath() string {
+	home_path := os.Getenv("HOME")
+	date := strings.Split(time.Now().String(), " ")[0]
+	file := strings.Join([]string{date, "-tasks"}, "")
+
+	return path.Join(home_path, ".pomo", file)
 }
